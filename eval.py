@@ -158,6 +158,17 @@ def prep_display(dets_out, img, h, w, undo_transform=True, class_color=False, ma
             # Masks are drawn on the GPU, so don't copy
             masks = t[3][idx]
         classes, scores, boxes = [x[idx].cpu().numpy() for x in t[:3]]
+        print("shape 0:", masks.shape[0])
+        print("shape 1:", masks.shape[1])
+        mask = np.zeros([masks.shape[1], masks.shape[2]], dtype=float)
+        for i in range(masks.shape[0]):
+            m = masks[i].byte().cpu().numpy()
+            mask += m
+        print(mask.shape)
+        plt.imshow(mask)
+        plt.title("mask")
+        plt.show()
+        cv2.imwrite("label.png", mask)
 
     num_dets_to_consider = min(args.top_k, classes.shape[0])
     for j in range(num_dets_to_consider):
